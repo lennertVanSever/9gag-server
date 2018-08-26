@@ -1,8 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const compression = require("compression");
-const helmet = require("helmet");
+const { SHA256 } = require("crypto-js");
 
 const { connection } = require("./Connection");
 const fs = require("fs");
@@ -11,6 +10,7 @@ const uuidv4 = require('uuid/v4');
 const server = express();
 const PORT = process.env.PORT || 8000;
 
+
 server.listen(PORT, () => {
   console.log(`Server is running on localhost:${PORT}`);
 });
@@ -18,11 +18,15 @@ server.listen(PORT, () => {
 server.use(express.static('public'))
 server.use(bodyParser.json());
 server.use(cors({origin: "http://localhost:3000"}));
-server.use(compression());
-server.use(helmet());
 
 server.get("/", (request, response) => {
-  response.send("on the master branch");
+  response.send("on master branch")
+})
+
+server.get("/password", (request, response) => {
+  const stupidPassword = "password123";
+  const hashedPassword = SHA256(stupidPassword);
+  console.log({hashedPassword});
 })
 
 server.get("/get/jokes", (request, response) => {
