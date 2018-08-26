@@ -1,6 +1,8 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const compression = require("compression");
+const helmet = require("helmet");
 
 const { connection } = require("./Connection");
 const fs = require("fs");
@@ -16,6 +18,12 @@ server.listen(PORT, () => {
 server.use(express.static('public'))
 server.use(bodyParser.json());
 server.use(cors({origin: "http://localhost:3000"}));
+server.use(compression());
+server.use(helmet());
+
+server.get("/", (request, response) => {
+  response.send("on the master branch");
+})
 
 server.get("/get/jokes", (request, response) => {
   connection.query("select * from joke order by id desc", (error, results) => {
